@@ -1,4 +1,5 @@
 ﻿using LeetCode_Proplems;
+using System.Collections.Immutable;
 using System.Diagnostics.Metrics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -28,9 +29,15 @@ public class Program
         //Console.WriteLine(med);
 
 
+        //var newarr = solution.TwoSum2(new int[] { 3, 4, 5, 6 }, 7);
+        //foreach (int i in newarr) 
+        //{
+        //    Console.WriteLine(i);
+        //}
 
+        //var list=  solution.GroupAnagrams(new string[] { "act", "cat", "pots", "stop" });
 
-        Console.WriteLine(solution.LengthOfLongestSubstring("ynyo")); 
+        var newArr = solution.TopKFrequent(new int[] {1,1,1,2,2,3,3,3,3 }, 2);
     }
 
 }
@@ -662,20 +669,20 @@ public class Solution
 
 
     #region Day 8
-    public int LengthOfLongestSubstring(string s)   
+    public int LengthOfLongestSubstring(string s)
     {
-        if(s.Length==0 || string.IsNullOrEmpty(s)) return 0;
+        if (s.Length == 0 || string.IsNullOrEmpty(s)) return 0;
         string subString = "";
         var SubStringsDictionary = new Dictionary<Guid, string>();
 
         for (int i = 0; i < s.Length; i++)
         {
             var lastSubString = SubStringsDictionary.Values.Max() ?? "";
-            for (int j = i; j <s. Length; j++)
-            {               
+            for (int j = i; j < s.Length; j++)
+            {
                 if (subString.Contains(s[j]))
                 {
-                    if (lastSubString.Length < subString.Length )
+                    if (lastSubString.Length < subString.Length)
                     {
 
                         SubStringsDictionary.Add(Guid.NewGuid(), subString);
@@ -704,15 +711,88 @@ public class Solution
         return max.Length > subString.Length ? max.Length : subString.Length;
 
     }
-    #endregion 
-}
-public class ListNode
-{
-    public int val;
-    public ListNode next;
-    public ListNode(int val = 0, ListNode next = null)
+    #endregion
+
+    #region Day9
+    public int[] TwoSum2(int[] nums, int target)
     {
-        this.val = val;
-        this.next = next;
+        var arrayValues = new Dictionary<int, string>();
+        for (int i = 0; i < nums.Length; i++)
+        {
+            var diff = target - nums[i];
+
+            arrayValues.TryGetValue(diff, out string hashValue);
+            if (!string.IsNullOrEmpty(hashValue))
+            {
+                return new int[] { int.Parse(hashValue), i };
+            }
+            arrayValues.Add(nums[i], i.ToString());
+        }
+        return new int[] { 0, 0 };
+    }
+    public List<List<string>> GroupAnagrams(string[] strs)
+    {
+        var sortedSentences = new Dictionary<string, List<string>>();
+
+        foreach (var str in strs)
+        {
+            var charArr = str.ToCharArray();
+            Array.Sort(charArr);
+            string sortedWord = new string(charArr); // Assuming MergedString does this
+
+            if (!sortedSentences.ContainsKey(sortedWord))
+            {
+                sortedSentences[sortedWord] = new List<string>();
+            }
+            sortedSentences[sortedWord].Add(str);
+        }
+
+        return new List<List<string>>(sortedSentences.Values);
+    }
+    #endregion
+
+    #region Day 10
+    public int[] TopKFrequent(int[] nums, int k)
+    {
+        var numbersFrequent = new Dictionary<int, int>();
+       
+        foreach (var num in nums)
+        {
+            if (numbersFrequent.ContainsKey(num))
+            {
+                numbersFrequent[num]++;
+            }
+            else
+            {
+                numbersFrequent.Add(num, 1);
+            }
+        }
+
+        var finelResult=numbersFrequent.OrderByDescending(x => x.Value).Select(x=>x.Key).Take(k).ToArray();
+        return finelResult;
+    }
+    #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public class ListNode
+    {
+        public int val;
+        public ListNode next;
+        public ListNode(int val = 0, ListNode next = null)
+        {
+            this.val = val;
+            this.next = next;
+        }
     }
 }
