@@ -19,18 +19,21 @@ namespace LeetCode_Problems
             //var topK = solution.TopKFrequent(new[] { 1, 1, 1, 2, 2, 3, 3, 3, 3 }, 2);
             //Console.WriteLine($"TopKFrequent: [{string.Join(", ", topK)}]");
 
-            solution.IsValidSudoku(new char[][]
-            {
-                new char[] {'1','2','.','.','3','.','.','.','.'},
-                new char[] {'4','.','.','5','.','.','.','.','.'},
-                new char[] {'.','9','8','.','.','.','.','.','3'},
-                new char[] {'5','.','.','.','6','.','.','.','4'},
-                new char[] {'.','.','.','8','.','3','.','.','5'},
-                new char[] {'7','.','.','.','2','.','.','.','6'},
-                new char[] {'.','.','.','.','.','.','2','.','.'},
-                new char[] {'.','.','.','4','1','9','.','.','8'},
-                new char[] {'.','.','.','.','8','.','.','7','9'}
-            });
+
+
+            var sudoku = solution.IsValidSudoku(new char[][]
+        {
+            new char[] {'1','2','.','.','3','.','.','.','.'},
+            new char[] {'4','.','.','5','.','.','.','.','.'},
+            new char[] {'.','9','1','.','.','.','.','.','3'},
+            new char[] {'5','.','.','.','6','.','.','.','4'},
+            new char[] {'.','.','.','8','.','3','.','.','5'},
+            new char[] {'7','.','.','.','2','.','.','.','6'},
+            new char[] {'.','.','.','.','.','.','2','.','.'},
+            new char[] {'.','.','.','4','1','9','.','.','8'},
+            new char[] {'.','.','.','.','8','.','.','7','9'}
+        });
+            Console.WriteLine($"Suduko Validation Satatus : {sudoku}");
 
         }
     }
@@ -363,29 +366,37 @@ namespace LeetCode_Problems
 
         // ---------------- Day 11 ----------------
 
+        #region Suduoku
         public bool IsValidSudoku(char[][] board)
         {
-
-            for (int i = 0; i < board.Length; i++)
+            // Check all rows
+            for (int i = 0; i < 9; i++)
             {
-
-                var Row = board[i];
-                var Col = GetColumn(i, board);
-                if (!ValidateArray(Row) || !ValidateArray(Col) ) return false;
-                for (int j = 0; j < board[i].Length; j++)
-                {
-                  var isSubBoxValid =  validateSubBoxs(board, i, j);
-                  return isSubBoxValid;
-                }
+                if (!ValidateArray(board[i]))
+                    return false;
             }
+
+            // Check all columns
+            for (int j = 0; j < 9; j++)
+            {
+                if (!ValidateArray(GetColumn(j, board)))
+                    return false;
+            }
+
+            // Check all 9 sub-boxes (once!)
+            if (!validateSubBoxs(board))
+                return false;
+
             return true;
         }
         private bool ValidateArray(char[] row)
         {
+            HashSet<char> values = new HashSet<char>();
             foreach (char c in row)
             {
                 if (c == '.') continue;
-                if (row.Count(x => x == c) > 1) return false;
+                if (!values.Add(c)) return false;
+
             }
             return true;
 
@@ -399,20 +410,38 @@ namespace LeetCode_Problems
             }
             return column;
         }
-
-        private bool validateSubBoxs(char[][] board, int row, int col)
+        private bool validateSubBoxs(char[][] board)
         {
-            for (int i = row; i < board.Length; i++)
+            // Check all 9 sub-boxes
+            for (int boxRow = 0; boxRow < 3; boxRow++)      // 3 rows of boxes
             {
-                for (int j = col; j <3; j++)
+                for (int boxCol = 0; boxCol < 3; boxCol++)  // 3 columns of boxes
                 {
-                    var Row = board[i];
-                    var Col = GetColumn(i, board);
-                    if (!ValidateArray(Row) || !ValidateArray(Col)) return false;
+                    if (!ValidateSubBox(board, boxRow * 3, boxCol * 3))
+                        return false;
                 }
             }
             return true;
         }
+        private bool ValidateSubBox(char[][] board, int startRow, int startCol)
+        {
+            // Extract the 3x3 box into a 1D array
+            var subBox = new char[9];
+            int index = 0;
+
+            for (int i = startRow; i < startRow + 3; i++)
+            {
+                for (int j = startCol; j < startCol + 3; j++)
+                {
+                    subBox[index++] = board[i][j];
+                }
+            }
+
+            // Reuse your ValidateArray method!
+            return ValidateArray(subBox);
+        }
+        #endregion
+
 
         // helper
         public void PrintList(ListNode? node)
