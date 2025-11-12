@@ -2,11 +2,13 @@
 using System.Diagnostics.Metrics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 public class Program
 {
     private static void Main(string[] args)
     {
+
         Solution solution = new Solution();
 
         // solution.SortList(new ListNode(-1, new ListNode(5, new ListNode(3, new ListNode(4, new ListNode(0))))));
@@ -27,10 +29,13 @@ public class Program
         //double med= solution.FindMedianSortedArrays(new int[] { 1, 2 }, new int[] { 3, 4 });
         //Console.WriteLine(med);
 
+        //  var result = solution.TopKFrequent(new int[] { 1, 2 }, 2);
 
 
+      var t=  solution.ProductExceptSelf(new int[] { 1, 2, 3, 4 });
 
-        Console.WriteLine(solution.LengthOfLongestSubstring("ynyo")); 
+
+        //Console.WriteLine(solution.LengthOfLongestSubstring("ynyo"));
     }
 
 }
@@ -662,20 +667,20 @@ public class Solution
 
 
     #region Day 8
-    public int LengthOfLongestSubstring(string s)   
+    public int LengthOfLongestSubstring(string s)
     {
-        if(s.Length==0 || string.IsNullOrEmpty(s)) return 0;
+        if (s.Length == 0 || string.IsNullOrEmpty(s)) return 0;
         string subString = "";
         var SubStringsDictionary = new Dictionary<Guid, string>();
 
         for (int i = 0; i < s.Length; i++)
         {
             var lastSubString = SubStringsDictionary.Values.Max() ?? "";
-            for (int j = i; j <s. Length; j++)
-            {               
+            for (int j = i; j < s.Length; j++)
+            {
                 if (subString.Contains(s[j]))
                 {
-                    if (lastSubString.Length < subString.Length )
+                    if (lastSubString.Length < subString.Length)
                     {
 
                         SubStringsDictionary.Add(Guid.NewGuid(), subString);
@@ -705,6 +710,101 @@ public class Solution
 
     }
     #endregion 
+
+    public int[] TopKFrequent(int[] nums, int k)
+    {
+        var numbersFrequency = new Dictionary<int, int>();
+        foreach (var num in nums)
+        {
+            if (numbersFrequency.ContainsKey(num))
+            {
+                numbersFrequency[num]++;
+            }
+            else
+            {
+                numbersFrequency.Add(num, 1);
+            }
+        }
+        // Create Buckets 
+        var buckets = new List<int>[nums.Length + 1];
+        // Fill Buckets
+        for (int i = 0; i < buckets.Length; i++)
+        {
+            var list = numbersFrequency.Where(x => x.Value == i).Select(x => x.Key).ToList();
+            buckets[i] = list;
+        }
+        // get most from buckets
+        var result = new List<int>(k);
+        for (int i = buckets.Length - 1; i >= 0 && result.Count < k; i--)
+        {
+            if (buckets[i] == null) continue;
+
+            // Add only what's needed to reach k
+            foreach (var n in buckets[i])
+            {
+                result.Add(n);
+                if (result.Count == k) break;
+            }
+        }
+
+        return result.ToArray();
+    }
+
+    public string Encode(IList<string> strs)
+    {
+        var sb = new StringBuilder();
+        foreach (var s in strs)
+        {
+            sb.Append(s.Length).Append('#').Append(s);
+        }
+        return sb.ToString();
+    }
+
+    // Decodes a single string to a list of strings
+    public IList<string> Decode(string encoded)
+    {
+        var result = new List<string>();
+        int i = 0;
+        while (i < encoded.Length)
+        {
+            int j = i;
+            // find '#'
+            while (encoded[j] != '#') j++;
+
+            int length = int.Parse(encoded.Substring(i, j - i));
+            string str = encoded.Substring(j + 1, length);
+            result.Add(str);
+
+            i = j + 1 + length; // move pointer
+        }
+        return result;
+    }
+
+
+    public int[] ProductExceptSelf(int[] nums)
+    {
+        var Left = new int[nums.Length];
+        var right = new int[nums.Length];
+        // fill Left Array
+        for (int i = 0; i < Left.Length; i++)
+        {
+            Left[i] = i == 0 ? 1 : Left[i - 1] * nums[i - 1];
+        }
+
+        // fill right Array
+        for (int i = nums.Length - 1; i >= 0; i--)
+        {
+            right[i] = i == nums.Length - 1 ? 1 : right[i + 1] * nums[i + 1];
+        }
+        var ans= new int[nums.Length];
+        for (int i = 0; i < nums.Length; i++)
+        {
+            ans[i] = Left[i] * right[i];
+        }
+        return ans;
+
+   
+    }
 }
 public class ListNode
 {
