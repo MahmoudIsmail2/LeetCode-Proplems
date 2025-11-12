@@ -1,912 +1,424 @@
-﻿using LeetCode_Proplems;
-using System.Collections.Immutable;
-using System.Diagnostics.Metrics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Text;
 
-public class Program
+namespace LeetCode_Problems
 {
-    private static void Main(string[] args)
+    public class Program
     {
-
-        Solution solution = new Solution();
-
-        // solution.SortList(new ListNode(-1, new ListNode(5, new ListNode(3, new ListNode(4, new ListNode(0))))));
-        //var result = solution.DeleteDuplicates(new ListNode(1, new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(3))))));
-
-        //var result = solution.DeleteDuplicates(new ListNode(1, new ListNode(1, new ListNode(2))));
-        //var result = solution.DeleteDuplicates(new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(3, new ListNode(4, new ListNode(4, new ListNode(5))))))));
-        //solution.PrintList(result);
-
-        // solution.SortColors(new int[] { 2, 0, 2, 1, 1, 0 });
-        //var area=solution.MaxArea(new int[] { 1, 8, 6, 2, 5, 4, 8, 3, 7 });
-        //Console.WriteLine(  $"area is : {area}");
-        //var merged=  solution.MergetwoSortedArrayes([1,3], [2]);
-        //  foreach(var item in merged)
-        //  {
-        //      Console.WriteLine(item);
-        //  }
-        //double med= solution.FindMedianSortedArrays(new int[] { 1, 2 }, new int[] { 3, 4 });
-        //Console.WriteLine(med);
-
-        //  var result = solution.TopKFrequent(new int[] { 1, 2 }, 2);
-
-        //var newarr = solution.TwoSum2(new int[] { 3, 4, 5, 6 }, 7);
-        //foreach (int i in newarr) 
-        //{
-        //    Console.WriteLine(i);
-        //}
-
-        //var list=  solution.GroupAnagrams(new string[] { "act", "cat", "pots", "stop" });
-      var t=  solution.ProductExceptSelf(new int[] { 1, 2, 3, 4 });
-
-        var newArr = solution.TopKFrequent(new int[] {1,1,1,2,2,3,3,3,3 }, 2);
-
-        //Console.WriteLine(solution.LengthOfLongestSubstring("ynyo"));
-    }
-
-}
-public class Solution
-{
-    #region DAY 1
-    public int[] TwoSum(int[] nums, int target)
-    {
-
-        for (int i = 0; i < nums.Length; i++)
+        private static void Main(string[] args)
         {
+            var solution = new Solution();
 
-            int diffrence = target - nums[i];
-            int result = Array.IndexOf(nums, diffrence);
-            if (result != -1 && result != i)
+            //// sanity checks
+            //var prod = solution.ProductExceptSelf(new[] { 1, 2, 3, 4 });
+            //Console.WriteLine($"ProductExceptSelf: [{string.Join(", ", prod)}]");
+
+            //var topK = solution.TopKFrequent(new[] { 1, 1, 1, 2, 2, 3, 3, 3, 3 }, 2);
+            //Console.WriteLine($"TopKFrequent: [{string.Join(", ", topK)}]");
+
+            solution.IsValidSudoku(new char[][]
             {
-                return new int[] { result, i };
-            }
-
-        }
-        return new int[] { };
-    }
-
-    public bool IsPalindrome(int x)
-    {
-        var strNum = x.ToString();
-        var charArray = strNum.ToCharArray();
-        var reversedCharArray = charArray.Reverse().ToArray();
-        return charArray.SequenceEqual(reversedCharArray);
-    }
-
-    public int RomanToInt(string s)
-    {
-        Dictionary<char, int> romanMap = new Dictionary<char, int>()
-        {
-            {'I', 1},
-            {'V', 5},
-            {'X', 10},
-            {'L', 50},
-            {'C', 100},
-            {'D', 500},
-            {'M', 1000}
-        };
-        int total = 0;
-        for (int i = 0; i < s.Length; i++)
-        {
-            switch (s[i])
-            {
-                case 'I':
-                    if (i != s.Length - 1)
-                    {
-                        if (s[i + 1] != 'V' && s[i + 1] != 'X')
-                        {
-                            total += romanMap[s[i]];
-                        }
-                        else
-                        {
-                            total += romanMap[s[i + 1]] - romanMap[s[i]];
-                            i++;
-                        }
-
-                    }
-                    else
-                    {
-                        total += romanMap[s[i]];
-                    }
-
-                    break;
-
-                case 'X':
-                    if (i != s.Length - 1)
-                    {
-                        if (s[i + 1] != 'L' && s[i + 1] != 'C')
-                        {
-                            total += romanMap[s[i]];
-                        }
-                        else
-                        {
-                            total += romanMap[s[i + 1]] - romanMap[s[i]];
-                            i++;
-                        }
-
-                    }
-                    else
-                    {
-                        total += romanMap[s[i]];
-                    }
-
-                    break;
-                case 'C':
-                    if (i != s.Length - 1)
-                    {
-                        if (s[i + 1] != 'D' && s[i + 1] != 'M')
-                        {
-                            total += romanMap[s[i]];
-                        }
-                        else
-                        {
-                            total += romanMap[s[i + 1]] - romanMap[s[i]];
-                            i++;
-                        }
-
-                    }
-                    else
-                    {
-                        total += romanMap[s[i]];
-                    }
-
-                    break;
-                default:
-                    total += romanMap[s[i]];
-                    break;
-
-            }
-
-        }
-        return total;
-
-    }
-    #endregion
-
-    #region Day 2 
-
-    public string LongestCommonPrefix(string[] strs)
-    {
-        var prefix = "";
-        for (int i = 0; i < strs[0].Length; i++)
-        {
-            char currentChar = strs[0][i];
-            for (int j = 1; j < strs.Length; j++)
-            {
-                if (i == strs[j].Length || strs[j][i] != currentChar)
-                {
-                    return prefix;
-                }
-            }
-            prefix += currentChar;
-        }
-        return prefix;
-    }
-
-    public bool IsValid(string s)
-    {
-        string openingBrackets = "";             // (       
-        if (s[0] != ')' && s[0] != ']' && s[0] != '}')
-        {
-            char lastOpeningBracket;
-            int openingBracketsCount = 0;
-            for (int i = 0; i < s.Length; i++)
-            {
-
-                switch (s[i])
-                {
-                    case ')':
-                        if (openingBrackets.Length != 0)
-                        {
-                            lastOpeningBracket = openingBrackets[openingBrackets.Length - 1];
-                            if (lastOpeningBracket == '(')
-                            {
-                                openingBrackets = openingBrackets.Remove(openingBrackets.Length - 1);
-                                if (openingBrackets.Length == 0 && i == s.Length - 1)
-                                    return true;
-
-                                break;
-                            }
-                        }
-                        return false;
-                    case ']':
-                        if (openingBrackets.Length != 0)
-                        {
-                            lastOpeningBracket = openingBrackets[openingBrackets.Length - 1];
-                            if (lastOpeningBracket == '[')
-                            {
-                                openingBrackets = openingBrackets.Remove(openingBrackets.Length - 1);
-                                if (openingBrackets.Length == 0 && i == s.Length - 1)
-                                    return true;
-
-                                break;
-                            }
-                        }
-                        return false;
-                    case '}':
-                        if (openingBrackets.Length != 0)
-                        {
-                            lastOpeningBracket = openingBrackets[openingBrackets.Length - 1];
-                            if (lastOpeningBracket == '{')
-                            {
-                                openingBrackets = openingBrackets.Remove(openingBrackets.Length - 1);
-                                if (openingBrackets.Length == 0 && i == s.Length - 1)
-                                    return true;
-
-                                break;
-                            }
-                        }
-                        return false;
-
-                    default:
-                        openingBrackets += s[i];
-                        break;
-                }
-            }
-
-        }
-        return false;
-
-    }
-
-    #region Merge Sorted Lists
-
-
-    public ListNode MergeTwoLists(ListNode list1, ListNode list2)
-    {
-        if (list1 == null) return list2;
-        if (list2 == null) return list1;
-
-        ListNode dummy = new ListNode(0);
-        var currentNode = dummy;
-
-
-        while (list1 != null && list2 != null)
-        {
-            if (list1.val < list2.val)
-            {
-                currentNode.next = list1;
-                list1 = list1.next;
-            }
-            else
-            {
-                currentNode.next = list2;
-                list2 = list2.next;
-            }
-            currentNode = currentNode.next;
-        }
-        if (list1 == null)
-        {
-            currentNode.next = list2;
-        }
-        else
-        {
-            currentNode.next = list1;
-        }
-        dummy = dummy.next;
-        return dummy;
-
-    }
-    public ListNode SortMergedList(ListNode merged, bool isSorted = false)
-    {
-        if (isSorted || merged == null || merged.next == null)
-        {
-            return merged;
-        }
-        else
-        {
-            var currentNode = merged;                   // Head of List
-            while (currentNode.next != null)
-            {
-                if (currentNode.val > currentNode.next.val)       // if true Swap 2 values
-                {
-                    var temp = currentNode.val;
-                    currentNode.val = currentNode.next.val;
-                    currentNode.next.val = temp;
-                }
-                currentNode = currentNode.next;
-            }
-
-
-            return SortMergedList(merged, IsLinkedListSorted(merged));
+                new char[] {'1','2','.','.','3','.','.','.','.'},
+                new char[] {'4','.','.','5','.','.','.','.','.'},
+                new char[] {'.','9','8','.','.','.','.','.','3'},
+                new char[] {'5','.','.','.','6','.','.','.','4'},
+                new char[] {'.','.','.','8','.','3','.','.','5'},
+                new char[] {'7','.','.','.','2','.','.','.','6'},
+                new char[] {'.','.','.','.','.','.','2','.','.'},
+                new char[] {'.','.','.','4','1','9','.','.','8'},
+                new char[] {'.','.','.','.','8','.','.','7','9'}
+            });
 
         }
     }
-    private bool IsLinkedListSorted(ListNode mergedList)
-    {
-        var head = mergedList;
-        while (head.next != null)
-        {
-            if (head.val > head.next.val)
-            {
-                return false;
-            }
-            head = head.next;
-        }
-        return true;
-    }
-
-    public void PrintList(ListNode current)
-    {
-        while (current != null)
-        {
-            Console.WriteLine(current.val);
-            current = current.next;
-        }
-    }
-    #endregion
-    #endregion
-
-    #region Day 3 
-
-    public int MaxProfit(int[] prices)
-    {
-        int minPrice = int.MaxValue;
-        int maxProfit = 0;
-        for (int i = 0; i < prices.Length; i++)
-        {
-            minPrice = Math.Min(minPrice, prices[i]);
-            maxProfit = Math.Max(maxProfit, prices[i] - minPrice);
-        }
-        return maxProfit;
-    }
-
-    public ListNode SortList(ListNode head)
-    {
-        // Divide List into 2 halves
-        if (head is null || head.next is null) return head;
-
-        var slow = head;
-        var fast = head;
-
-        while (fast != null && fast.next != null && fast.next.next != null)
-        {
-            slow = slow.next;
-            fast = fast.next.next;
-        }
-        // now slow is at middle
-        var second = slow.next;
-        slow.next = null;
-        var first = head;                  // Now i have 2 lists
-
-
-
-        // Step 3: Recursively sort both halves
-        first = SortList(first);
-        second = SortList(second);
-
-        // Step 4: Merge the sorted halves
-        return Merge(first, second);
-
-
-    }
-    private ListNode Merge(ListNode l1, ListNode l2)
-    {
-        var dummy = new ListNode(0);
-        var tail = dummy;
-
-        while (l1 != null && l2 != null)
-        {
-            if (l1.val <= l2.val)
-            {
-                tail.next = l1;
-                l1 = l1.next;
-            }
-            else
-            {
-                tail.next = l2;
-                l2 = l2.next;
-            }
-            tail = tail.next;
-        }
-
-        // Attach the remaining part of whichever list is not empty
-        tail.next = l1 ?? l2;
-
-        return dummy.next;
-    }
-    #endregion
-
-    #region Day 4
-    //public ListNode DeleteDuplicates(ListNode head)
-    //{
-    //    if (head == null) return head;
-    //    var output = head;
-    //    while (head.next != null)
-    //    {
-    //        if (head.val == head.next.val)
-    //        {
-    //            head.next = head.next.next;
-    //        }
-    //        else
-    //        {
-    //            head = head.next;
-    //        }
-    //    }
-    //    return output;
-
-    //}
-    public ListNode DeleteDuplicates(ListNode head)
-    {
-        var dummy = new ListNode(0, head);
-        var prev = dummy;
-        var current = head;
-
-        while (current != null)
-        {
-            // Check if this node is the start of duplicates
-            if (current.next != null && current.val == current.next.val)
-            {
-                // Skip all nodes with the same value
-                while (current.next != null && current.val == current.next.val)
-                {
-                    current = current.next;
-                }
-                // Bypass the duplicates
-                prev.next = current.next;
-            }
-            else
-            {
-                // No duplicates — move prev forward
-                prev = prev.next;
-            }
-            // Move current forward
-            current = current.next;
-        }
-
-        return dummy.next;
-    }
-
-
-    #endregion
-
-
-    #region Day 5
-    public void SortColors(int[] nums)
-    {
-        // Buble Sort
-
-        //var n=nums.Length;
-        //for(int i =0; i<n-1; i++)
-        //{
-        //    for(int j=0; j<n-i-1; j++)
-        //    {
-        //        if (nums[j] > nums[j+1])
-        //        {
-        //            var temp = nums[j];
-        //            nums[j] = nums[j + 1];
-        //            nums[j + 1] = temp;
-        //        }
-        //    }
-        //} 
-
-
-
-    }
-
-    #endregion
-
-    #region Day 6
-
-    public int MaxArea(int[] height)
-    {
-        // Brute Force
-
-        //var n = height.Length;
-        //var area = 0;
-        //for(int i=0; i < n; i++)
-        //{
-        //    for (int j=i+1;j<n; j++)
-        //    {
-        //        var h = Math.Min(height[i], height[j]);
-        //        var w = j - i;
-        //        area = Math.Max(area, h * w);
-        //    }
-        //}
-        //return area;
-
-        // Optimal Solution
-        int left = 0;
-        int right = height.Length - 1;
-        var area = 0;
-        while (left < right)
-        {
-            if (height[left] < height[right])
-            {
-                var h = height[left];
-                var w = right - left;
-                area = Math.Max(area, h * w);
-                left++;
-            }
-            else
-            {
-                var h = height[right];
-                var w = right - left;
-                area = Math.Max(area, h * w);
-                right--;
-            }
-        }
-        return area;
-    }
-
-    public int[] MergetwoSortedArrayes(int[] nums1, int[] nums2)
-    {
-        int len1 = nums1.Length;
-        int len2 = nums2.Length;
-
-        int left = 0;
-        int right = 0;
-        int i = 0;
-        int looplimit = Math.Max(len1, len2);
-        int[] merge = new int[len1 + len2];
-
-        while (left < len1 && right < len2)
-        {
-            if (nums1[left] < nums2[right])
-            {
-                merge[i] = nums1[left];
-                left++;
-            }
-            else
-            {
-                merge[i] = nums2[right];
-                right++;
-            }
-            i++;
-        }
-        // Copy the remaining elements
-        if (left < len1)
-        {
-            for (int j = left; j < len1; j++)
-            {
-                merge[i] = nums1[j];
-                i++;
-            }
-        }
-        else if (right < len2)
-        {
-            for (int j = right; j < len2; j++)
-            {
-                merge[i] = nums2[j];
-                i++;
-            }
-        }
-        else
-        {
-            return merge;
-        }
-        return merge;
-    }
-    public double FindMedianSortedArrays(int[] nums1, int[] nums2)
-    {
-        var merged = MergetwoSortedArrayes(nums1, nums2);
-        int n = merged.Length;
-
-        if (n % 2 == 0)
-        {
-            // Even number of elements → average of middle two
-            return (merged[n / 2] + merged[(n / 2) - 1]) / 2.0;
-        }
-        else
-        {
-            // Odd number of elements → middle element
-            return merged[n / 2];
-        }
-    }
-
-    #endregion
-
-    #region Day 7
-    public ListNode AddTwoNumbers(ListNode l1, ListNode l2)
-    {
-        var num1 = reversestring(GetNumberFromList(l1));
-        var num2 = reversestring(GetNumberFromList(l2));
-        BigInteger sum = BigInteger.Parse(num1) + BigInteger.Parse(num2);
-
-        string reversedSumString = reversestring(sum.ToString());
-
-
-        ListNode newList = new ListNode();
-        var current = newList;
-        foreach (var i in reversedSumString)
-        {
-
-            current.next = new ListNode(int.Parse(i.ToString()));
-            current = current.next;
-        }
-        return newList.next;
-    }
-    private string GetNumberFromList(ListNode listNode)
-    {
-        string number = "";
-        var current = listNode;
-        while (current != null)
-        {
-            number += current.val;
-            current = current.next;
-        }
-        return number;
-    }
-    private string reversestring(string s)
-    {
-        char[] charArray = s.ToCharArray();
-        Array.Reverse(charArray);
-        string reversedString = new string(charArray);
-        return reversedString;
-    }
-
-
-    public string ReverseVowels(string s)
-    {
-
-        var vowels = new char[] { 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U' };
-        int left = 0;
-        int right = s.Length - 1;
-        char[] charArray = s.ToCharArray();
-        while (left < right)
-        {
-            if (vowels.Contains(s[left]))
-            {
-                if (vowels.Contains(s[right]))
-                {
-
-                    var temp = s[left];
-                    charArray[left] = s[right];
-                    charArray[right] = temp;
-
-                    left++;
-                    right--;
-
-                }
-                else { right--; }
-            }
-            else
-
-
-            {
-                left++;
-            }
-        }
-        return new string(charArray);
-    }
-    #endregion
-
-
-    #region Day 8
-    public int LengthOfLongestSubstring(string s)
-    {
-        if (s.Length == 0 || string.IsNullOrEmpty(s)) return 0;
-        string subString = "";
-        var SubStringsDictionary = new Dictionary<Guid, string>();
-
-        for (int i = 0; i < s.Length; i++)
-        {
-            var lastSubString = SubStringsDictionary.Values.Max() ?? "";
-            for (int j = i; j < s.Length; j++)
-            {
-                if (subString.Contains(s[j]))
-                {
-                    if (lastSubString.Length < subString.Length)
-                    {
-
-                        SubStringsDictionary.Add(Guid.NewGuid(), subString);
-                    }
-                    subString = "";
-                    break;
-                }
-                else
-                {
-                    subString += s[j];
-                }
-            }
-            if (lastSubString.Length < subString.Length)
-            {
-                SubStringsDictionary.Add(Guid.NewGuid(), subString);
-            }
-        }
-
-
-
-
-        var max = SubStringsDictionary.Values.MaxBy(s => s.Length) ?? "";
-
-
-
-        return max.Length > subString.Length ? max.Length : subString.Length;
-
-    }
-    #endregion
-
-    #region Day9
-    public int[] TwoSum2(int[] nums, int target)
-    {
-        var arrayValues = new Dictionary<int, string>();
-        for (int i = 0; i < nums.Length; i++)
-        {
-            var diff = target - nums[i];
-
-            arrayValues.TryGetValue(diff, out string hashValue);
-            if (!string.IsNullOrEmpty(hashValue))
-            {
-                return new int[] { int.Parse(hashValue), i };
-            }
-            arrayValues.Add(nums[i], i.ToString());
-        }
-        return new int[] { 0, 0 };
-    }
-    public List<List<string>> GroupAnagrams(string[] strs)
-    {
-        var sortedSentences = new Dictionary<string, List<string>>();
-
-        foreach (var str in strs)
-        {
-            var charArr = str.ToCharArray();
-            Array.Sort(charArr);
-            string sortedWord = new string(charArr); // Assuming MergedString does this
-
-            if (!sortedSentences.ContainsKey(sortedWord))
-            {
-                sortedSentences[sortedWord] = new List<string>();
-            }
-            sortedSentences[sortedWord].Add(str);
-        }
-
-        return new List<List<string>>(sortedSentences.Values);
-    }
-    #endregion
-
-    #region Day 10
-    public int[] TopKFrequent(int[] nums, int k)
-    {
-        var numbersFrequent = new Dictionary<int, int>();
-       
-        foreach (var num in nums)
-        {
-            if (numbersFrequent.ContainsKey(num))
-            {
-                numbersFrequent[num]++;
-            }
-            else
-            {
-                numbersFrequent.Add(num, 1);
-            }
-        }
-
-        var finelResult=numbersFrequent.OrderByDescending(x => x.Value).Select(x=>x.Key).Take(k).ToArray();
-        return finelResult;
-    }
-    #endregion
-
-
-
-
-
-
-
-
-
-
-
-
 
     public class ListNode
     {
         public int val;
-        public ListNode next;
-        public ListNode(int val = 0, ListNode next = null)
+        public ListNode? next;
+        public ListNode(int val = 0, ListNode? next = null)
         {
             this.val = val;
             this.next = next;
         }
     }
-}
-    }
-    #endregion 
 
-    public int[] TopKFrequent(int[] nums, int k)
+    public class Solution
     {
-        var numbersFrequency = new Dictionary<int, int>();
-        foreach (var num in nums)
+        // ---------------- Day 1 ----------------
+        public int[] TwoSum(int[] nums, int target)
         {
-            if (numbersFrequency.ContainsKey(num))
+            var seen = new Dictionary<int, int>();
+            for (int i = 0; i < nums.Length; i++)
             {
-                numbersFrequency[num]++;
+                int need = target - nums[i];
+                if (seen.TryGetValue(need, out int j)) return new[] { j, i };
+                if (!seen.ContainsKey(nums[i])) seen[nums[i]] = i;
             }
-            else
+            return Array.Empty<int>();
+        }
+
+        public bool IsPalindrome(int x)
+        {
+            if (x < 0) return false;
+            var s = x.ToString();
+            for (int i = 0, j = s.Length - 1; i < j; i++, j--)
+                if (s[i] != s[j]) return false;
+            return true;
+        }
+
+        public int RomanToInt(string s)
+        {
+            var map = new Dictionary<char, int>
             {
-                numbersFrequency.Add(num, 1);
-            }
-        }
-        // Create Buckets 
-        var buckets = new List<int>[nums.Length + 1];
-        // Fill Buckets
-        for (int i = 0; i < buckets.Length; i++)
-        {
-            var list = numbersFrequency.Where(x => x.Value == i).Select(x => x.Key).ToList();
-            buckets[i] = list;
-        }
-        // get most from buckets
-        var result = new List<int>(k);
-        for (int i = buckets.Length - 1; i >= 0 && result.Count < k; i--)
-        {
-            if (buckets[i] == null) continue;
-
-            // Add only what's needed to reach k
-            foreach (var n in buckets[i])
+                ['I'] = 1,
+                ['V'] = 5,
+                ['X'] = 10,
+                ['L'] = 50,
+                ['C'] = 100,
+                ['D'] = 500,
+                ['M'] = 1000
+            };
+            int total = 0;
+            for (int i = 0; i < s.Length; i++)
             {
-                result.Add(n);
-                if (result.Count == k) break;
+                int val = map[s[i]];
+                if (i + 1 < s.Length && map[s[i + 1]] > val) total -= val;
+                else total += val;
+            }
+            return total;
+        }
+
+        // ---------------- Day 2 ----------------
+        public string LongestCommonPrefix(string[] strs)
+        {
+            if (strs == null || strs.Length == 0) return "";
+            string prefix = strs[0];
+            for (int i = 1; i < strs.Length && prefix.Length > 0; i++)
+            {
+                while (!strs[i].StartsWith(prefix, StringComparison.Ordinal))
+                    prefix = prefix[..^1];
+            }
+            return prefix;
+        }
+
+        public bool IsValid(string s)
+        {
+            var stack = new Stack<char>();
+            var pairs = new Dictionary<char, char> { [')'] = '(', [']'] = '[', ['}'] = '{' };
+            foreach (char c in s)
+            {
+                if (pairs.ContainsValue(c)) stack.Push(c);
+                else if (pairs.TryGetValue(c, out char want))
+                {
+                    if (stack.Count == 0 || stack.Pop() != want) return false;
+                }
+                else return false;
+            }
+            return stack.Count == 0;
+        }
+
+        public ListNode? MergeTwoLists(ListNode? list1, ListNode? list2)
+        {
+            var dummy = new ListNode();
+            var cur = dummy;
+            while (list1 != null && list2 != null)
+            {
+                if (list1.val <= list2.val) { cur.next = list1; list1 = list1.next; }
+                else { cur.next = list2; list2 = list2.next; }
+                cur = cur.next!;
+            }
+            cur.next = list1 ?? list2;
+            return dummy.next;
+        }
+
+        // ---------------- Day 3 ----------------
+        public int MaxProfit(int[] prices)
+        {
+            int minP = int.MaxValue, best = 0;
+            foreach (var p in prices) { minP = Math.Min(minP, p); best = Math.Max(best, p - minP); }
+            return best;
+        }
+
+        public ListNode? SortList(ListNode? head)
+        {
+            if (head == null || head.next == null) return head;
+            // split
+            var slow = head; var fast = head.next;
+            while (fast != null && fast.next != null) { slow = slow.next!; fast = fast.next.next; }
+            var second = slow.next; slow.next = null;
+            // sort halves
+            var l1 = SortList(head);
+            var l2 = SortList(second);
+            // merge
+            return Merge(l1, l2);
+
+            static ListNode? Merge(ListNode? a, ListNode? b)
+            {
+                var dummy = new ListNode(); var t = dummy;
+                while (a != null && b != null)
+                {
+                    if (a.val <= b.val) { t.next = a; a = a.next; }
+                    else { t.next = b; b = b.next; }
+                    t = t.next!;
+                }
+                t.next = a ?? b;
+                return dummy.next;
             }
         }
 
-        return result.ToArray();
-    }
-
-    public string Encode(IList<string> strs)
-    {
-        var sb = new StringBuilder();
-        foreach (var s in strs)
+        // ---------------- Day 4 ----------------
+        // Remove all duplicates such that only distinct numbers remain (LeetCode 82).
+        public ListNode? DeleteDuplicates(ListNode? head)
         {
-            sb.Append(s.Length).Append('#').Append(s);
-        }
-        return sb.ToString();
-    }
-
-    // Decodes a single string to a list of strings
-    public IList<string> Decode(string encoded)
-    {
-        var result = new List<string>();
-        int i = 0;
-        while (i < encoded.Length)
-        {
-            int j = i;
-            // find '#'
-            while (encoded[j] != '#') j++;
-
-            int length = int.Parse(encoded.Substring(i, j - i));
-            string str = encoded.Substring(j + 1, length);
-            result.Add(str);
-
-            i = j + 1 + length; // move pointer
-        }
-        return result;
-    }
-
-
-    public int[] ProductExceptSelf(int[] nums)
-    {
-        var Left = new int[nums.Length];
-        var right = new int[nums.Length];
-        // fill Left Array
-        for (int i = 0; i < Left.Length; i++)
-        {
-            Left[i] = i == 0 ? 1 : Left[i - 1] * nums[i - 1];
+            var dummy = new ListNode(0, head);
+            var prev = dummy;
+            while (head != null)
+            {
+                if (head.next != null && head.val == head.next.val)
+                {
+                    int v = head.val;
+                    while (head != null && head.val == v) head = head.next;
+                    prev.next = head;
+                }
+                else
+                {
+                    prev = head;
+                    head = head.next;
+                }
+            }
+            return dummy.next;
         }
 
-        // fill right Array
-        for (int i = nums.Length - 1; i >= 0; i--)
+        // ---------------- Day 5 ----------------
+        public void SortColors(int[] nums) // Dutch National Flag
         {
-            right[i] = i == nums.Length - 1 ? 1 : right[i + 1] * nums[i + 1];
+            int l = 0, i = 0, r = nums.Length - 1;
+            while (i <= r)
+            {
+                if (nums[i] == 0) { (nums[l], nums[i]) = (nums[i], nums[l]); l++; i++; }
+                else if (nums[i] == 2) { (nums[r], nums[i]) = (nums[i], nums[r]); r--; }
+                else i++;
+            }
         }
-        var ans= new int[nums.Length];
-        for (int i = 0; i < nums.Length; i++)
-        {
-            ans[i] = Left[i] * right[i];
-        }
-        return ans;
 
-   
-    }
-}
-public class ListNode
-{
-    public int val;
-    public ListNode next;
-    public ListNode(int val = 0, ListNode next = null)
-    {
-        this.val = val;
-        this.next = next;
+        // ---------------- Day 6 ----------------
+        public int MaxArea(int[] height)
+        {
+            int l = 0, r = height.Length - 1, best = 0;
+            while (l < r)
+            {
+                int h = Math.Min(height[l], height[r]);
+                best = Math.Max(best, h * (r - l));
+                if (height[l] < height[r]) l++; else r--;
+            }
+            return best;
+        }
+
+        public int[] MergetwoSortedArrayes(int[] nums1, int[] nums2)
+        {
+            int i = 0, j = 0, k = 0;
+            var merged = new int[nums1.Length + nums2.Length];
+            while (i < nums1.Length && j < nums2.Length)
+                merged[k++] = (nums1[i] <= nums2[j]) ? nums1[i++] : nums2[j++];
+            while (i < nums1.Length) merged[k++] = nums1[i++];
+            while (j < nums2.Length) merged[k++] = nums2[j++];
+            return merged;
+        }
+
+        public double FindMedianSortedArrays(int[] nums1, int[] nums2)
+        {
+            var m = MergetwoSortedArrayes(nums1, nums2);
+            int n = m.Length;
+            return (n % 2 == 1) ? m[n / 2] : (m[n / 2 - 1] + m[n / 2]) / 2.0;
+        }
+
+        // ---------------- Day 7 ----------------
+        public ListNode? AddTwoNumbers(ListNode? l1, ListNode? l2)
+        {
+            int carry = 0;
+            var dummy = new ListNode();
+            var cur = dummy;
+            while (l1 != null || l2 != null || carry > 0)
+            {
+                int sum = (l1?.val ?? 0) + (l2?.val ?? 0) + carry;
+                carry = sum / 10;
+                cur.next = new ListNode(sum % 10);
+                cur = cur.next;
+                l1 = l1?.next;
+                l2 = l2?.next;
+            }
+            return dummy.next;
+        }
+
+        public string ReverseVowels(string s)
+        {
+            var set = new HashSet<char>("aeiouAEIOU");
+            var arr = s.ToCharArray();
+            int l = 0, r = arr.Length - 1;
+            while (l < r)
+            {
+                if (!set.Contains(arr[l])) { l++; continue; }
+                if (!set.Contains(arr[r])) { r--; continue; }
+                (arr[l], arr[r]) = (arr[r], arr[l]);
+                l++; r--;
+            }
+            return new string(arr);
+        }
+
+        // ---------------- Day 8 ----------------
+        public int LengthOfLongestSubstring(string s)
+        {
+            var last = new Dictionary<char, int>();
+            int best = 0, start = 0;
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (last.TryGetValue(s[i], out int prev) && prev >= start) start = prev + 1;
+                last[s[i]] = i;
+                best = Math.Max(best, i - start + 1);
+            }
+            return best;
+        }
+
+        // ---------------- Day 9 ----------------
+        public int[] TwoSum2(int[] nums, int target) => TwoSum(nums, target);
+
+        public List<List<string>> GroupAnagrams(string[] strs)
+        {
+            var dict = new Dictionary<string, List<string>>();
+            foreach (var s in strs)
+            {
+                var key = new string(s.OrderBy(c => c).ToArray());
+                if (!dict.ContainsKey(key)) dict[key] = new List<string>();
+                dict[key].Add(s);
+            }
+            return dict.Values.ToList();
+        }
+
+        public int[] TopKFrequent(int[] nums, int k)
+        {
+            var freq = new Dictionary<int, int>();
+            foreach (var n in nums) freq[n] = freq.GetValueOrDefault(n) + 1;
+
+            var buckets = new List<int>[nums.Length + 1];
+            foreach (var (num, f) in freq)
+            {
+                buckets[f] ??= new List<int>();
+                buckets[f].Add(num);
+            }
+
+            var res = new List<int>(k);
+            for (int f = buckets.Length - 1; f >= 0 && res.Count < k; f--)
+                if (buckets[f] != null)
+                    foreach (var n in buckets[f])
+                    {
+                        res.Add(n);
+                        if (res.Count == k) break;
+                    }
+            return res.ToArray();
+        }
+
+        public string Encode(IList<string> strs)
+        {
+            var sb = new StringBuilder();
+            foreach (var s in strs) sb.Append(s.Length).Append('#').Append(s);
+            return sb.ToString();
+        }
+
+        public IList<string> Decode(string encoded)
+        {
+            var ans = new List<string>();
+            int i = 0;
+            while (i < encoded.Length)
+            {
+                int j = i;
+                while (encoded[j] != '#') j++;
+                int len = int.Parse(encoded[i..j]);
+                string str = encoded.Substring(j + 1, len);
+                ans.Add(str);
+                i = j + 1 + len;
+            }
+            return ans;
+        }
+
+        // ---------------- Day 10 ----------------
+        public int[] ProductExceptSelf(int[] nums)
+        {
+            int n = nums.Length;
+            var left = new int[n];
+            var right = new int[n];
+            left[0] = 1;
+            for (int i = 1; i < n; i++) left[i] = left[i - 1] * nums[i - 1];
+            right[n - 1] = 1;
+            for (int i = n - 2; i >= 0; i--) right[i] = right[i + 1] * nums[i + 1];
+            var ans = new int[n];
+            for (int i = 0; i < n; i++) ans[i] = left[i] * right[i];
+            return ans;
+        }
+
+
+
+        // ---------------- Day 11 ----------------
+
+        public bool IsValidSudoku(char[][] board)
+        {
+
+            for (int i = 0; i < board.Length; i++)
+            {
+
+                var Row = board[i];
+                var Col = GetColumn(i, board);
+                if (!ValidateArray(Row) || !ValidateArray(Col) ) return false;
+                for (int j = 0; j < board[i].Length; j++)
+                {
+                  var isSubBoxValid =  validateSubBoxs(board, i, j);
+                  return isSubBoxValid;
+                }
+            }
+            return true;
+        }
+        private bool ValidateArray(char[] row)
+        {
+            foreach (char c in row)
+            {
+                if (c == '.') continue;
+                if (row.Count(x => x == c) > 1) return false;
+            }
+            return true;
+
+        }
+        private char[] GetColumn(int col, char[][] board)
+        {
+            var column = new char[board.Length];
+            for (int i = 0; i < board.Length; i++)
+            {
+                column[i] = board[i][col];
+            }
+            return column;
+        }
+
+        private bool validateSubBoxs(char[][] board, int row, int col)
+        {
+            for (int i = row; i < board.Length; i++)
+            {
+                for (int j = col; j <3; j++)
+                {
+                    var Row = board[i];
+                    var Col = GetColumn(i, board);
+                    if (!ValidateArray(Row) || !ValidateArray(Col)) return false;
+                }
+            }
+            return true;
+        }
+
+        // helper
+        public void PrintList(ListNode? node)
+        {
+            while (node != null) { Console.Write(node.val + (node.next != null ? " -> " : "")); node = node.next; }
+            Console.WriteLine();
+        }
     }
 }
