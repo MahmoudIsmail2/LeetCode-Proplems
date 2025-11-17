@@ -13,33 +13,33 @@ namespace LeetCode_Problems
         {
 
 
-            var date = new DateTime(2020, 10, 12);
-            bool isWeekend = date.IsWeekend();
-            var solution = new Solution();
+        //    var date = new DateTime(2020, 10, 12);
+        //    bool isWeekend = date.IsWeekend();
+           var solution = new Solution();
 
-            //// sanity checks
-            //var prod = solution.ProductExceptSelf(new[] { 1, 2, 3, 4 });
-            //Console.WriteLine($"ProductExceptSelf: [{string.Join(", ", prod)}]");
+        //    //// sanity checks
+        //    //var prod = solution.ProductExceptSelf(new[] { 1, 2, 3, 4 });
+        //    //Console.WriteLine($"ProductExceptSelf: [{string.Join(", ", prod)}]");
 
-            //var topK = solution.TopKFrequent(new[] { 1, 1, 1, 2, 2, 3, 3, 3, 3 }, 2);
-            //Console.WriteLine($"TopKFrequent: [{string.Join(", ", topK)}]");
+        //    //var topK = solution.TopKFrequent(new[] { 1, 1, 1, 2, 2, 3, 3, 3, 3 }, 2);
+        //    //Console.WriteLine($"TopKFrequent: [{string.Join(", ", topK)}]");
 
 
 
-            var sudoku = solution.IsValidSudoku(new char[][]
-        {
-            new char[] {'1','2','.','.','3','.','.','.','.'},
-            new char[] {'4','.','.','5','.','.','.','.','.'},
-            new char[] {'.','9','1','.','.','.','.','.','3'},
-            new char[] {'5','.','.','.','6','.','.','.','4'},
-            new char[] {'.','.','.','8','.','3','.','.','5'},
-            new char[] {'7','.','.','.','2','.','.','.','6'},
-            new char[] {'.','.','.','.','.','.','2','.','.'},
-            new char[] {'.','.','.','4','1','9','.','.','8'},
-            new char[] {'.','.','.','.','8','.','.','7','9'}
-        });
-            Console.WriteLine($"Suduko Validation Satatus : {sudoku}");
-
+        //    var sudoku = solution.IsValidSudoku(new char[][]
+        //{
+        //    new char[] {'1','2','.','.','3','.','.','.','.'},
+        //    new char[] {'4','.','.','5','.','.','.','.','.'},
+        //    new char[] {'.','9','1','.','.','.','.','.','3'},
+        //    new char[] {'5','.','.','.','6','.','.','.','4'},
+        //    new char[] {'.','.','.','8','.','3','.','.','5'},
+        //    new char[] {'7','.','.','.','2','.','.','.','6'},
+        //    new char[] {'.','.','.','.','.','.','2','.','.'},
+        //    new char[] {'.','.','.','4','1','9','.','.','8'},
+        //    new char[] {'.','.','.','.','8','.','.','7','9'}
+        //});
+        //    Console.WriteLine($"Suduko Validation Satatus : {sudoku}");
+      solution.ThreeSum(new[] { -1, 0, 1, 2, -1, -4 });
         }
     }
 
@@ -447,6 +447,65 @@ namespace LeetCode_Problems
         }
         #endregion
 
+        public List<List<int>> ThreeSum(int[] nums)
+        {
+            var alltriplet = new List<List<int>>();
+            var finelResult = new List<List<int>>();
+            var dic = new Dictionary<int, List<int>>();
+            for (int i = 0; i < nums.Length; i++)
+            {
+                for (int j = i + 1; j < nums.Length; j++)
+                {
+                    for (int k = j + 1; k < nums.Length; k++)
+                    {
+                        if (nums[i] + nums[j] + nums[k] == 0)
+                        {
+                            alltriplet.Add(new List<int>() { nums[i], nums[j], nums[k] });
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < alltriplet.Count(); i++)
+            {
+                alltriplet[i].Sort();
+                dic.Add(i, alltriplet[i]);
+            }
+            var keiesToRemove = CheckEqualLists(dic);
+            foreach (var key in keiesToRemove)
+            {
+                dic.Remove(key);
+            }
+          foreach (var item in dic)
+            {
+                finelResult.Add(item.Value);
+            }
+            return finelResult;
+        }
+        public List<int> CheckEqualLists(Dictionary<int, List<int>> dict)
+        {
+            var found = new List<int>();
+
+            // Loop through each key-value pair in the dictionary
+            foreach (var kvp in dict)
+            {
+                // Compare each List<int> within the same Dictionary value
+                for (int i = 0; i < kvp.Value.Count; i++)
+                {
+                    // Compare this list with the other lists in the dictionary
+                    for (int j = i + 1; j < kvp.Value.Count; j++)
+                    {
+                        // Check if two List<int> are equal
+                        if (kvp.Value[i].Equals(kvp.Value[j]))
+                        {
+                            found.Add(kvp.Key); // Found equal lists, add the key
+                            break; // Break as we found a match for this key
+                        }
+                    }
+                }
+            }
+
+            return found; // Return the list of keys where equal lists were found
+        }
 
         // helper
         public void PrintList(ListNode? node)
