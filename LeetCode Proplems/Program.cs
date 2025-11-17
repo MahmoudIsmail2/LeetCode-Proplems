@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LeetCode_Proplems;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -10,6 +11,10 @@ namespace LeetCode_Problems
     {
         private static void Main(string[] args)
         {
+
+
+            var date = new DateTime(2020, 10, 12);
+            bool isWeekend = date.IsWeekend();
             var solution = new Solution();
 
             //// sanity checks
