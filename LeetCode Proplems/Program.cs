@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace LeetCode_Problems
 {
@@ -12,29 +13,14 @@ namespace LeetCode_Problems
         {
             var solution = new Solution();
 
-            //// sanity checks
-            //var prod = solution.ProductExceptSelf(new[] { 1, 2, 3, 4 });
-            //Console.WriteLine($"ProductExceptSelf: [{string.Join(", ", prod)}]");
-
-            //var topK = solution.TopKFrequent(new[] { 1, 1, 1, 2, 2, 3, 3, 3, 3 }, 2);
-            //Console.WriteLine($"TopKFrequent: [{string.Join(", ", topK)}]");
+            //string s = "jar", t = "jam";
+            //solution.IsAnagram(s, t);
 
 
+            //string s = "No lemon, no melon";
+            //solution.IsPalindrome(s);
 
-            var sudoku = solution.IsValidSudoku(new char[][]
-        {
-            new char[] {'1','2','.','.','3','.','.','.','.'},
-            new char[] {'4','.','.','5','.','.','.','.','.'},
-            new char[] {'.','9','1','.','.','.','.','.','3'},
-            new char[] {'5','.','.','.','6','.','.','.','4'},
-            new char[] {'.','.','.','8','.','3','.','.','5'},
-            new char[] {'7','.','.','.','2','.','.','.','6'},
-            new char[] {'.','.','.','.','.','.','2','.','.'},
-            new char[] {'.','.','.','4','1','9','.','.','8'},
-            new char[] {'.','.','.','.','8','.','.','7','9'}
-        });
-            Console.WriteLine($"Suduko Validation Satatus : {sudoku}");
-
+            solution.Trap(new int[] { 0, 2, 0, 3, 1, 0, 1, 3, 2, 1 });
         }
     }
 
@@ -52,8 +38,10 @@ namespace LeetCode_Problems
     public class Solution
     {
         // ---------------- Day 1 ----------------
+        //  TwoSum
         public int[] TwoSum(int[] nums, int target)
         {
+
             var seen = new Dictionary<int, int>();
             for (int i = 0; i < nums.Length; i++)
             {
@@ -63,16 +51,50 @@ namespace LeetCode_Problems
             }
             return Array.Empty<int>();
         }
-
-        public bool IsPalindrome(int x)
+        // Two Integer Sum I
+        public int[] TwoSum2(int[] numbers, int target)
         {
-            if (x < 0) return false;
-            var s = x.ToString();
-            for (int i = 0, j = s.Length - 1; i < j; i++, j--)
-                if (s[i] != s[j]) return false;
-            return true;
+
+            int left = 0, right = numbers.Length - 1;
+            while (left < right)
+            {
+                if (numbers[left] + numbers[right] > target)
+                {
+                    right--;
+                }
+                else if (numbers[left] + numbers[right] < target)
+                {
+                    left++;
+                }
+                else
+                {
+                    return new int[] { left + 1, right + 1 };
+                }
+            }
+            return new int[0];
         }
 
+        public bool IsPalindrome(string s)
+        {
+            int left = 0, right = s.Length - 1;
+            while (left < right)
+            {
+                while (left < right && !char.IsLetterOrDigit(s[left]))
+                { left++; }
+
+                while (left < right && !char.IsLetterOrDigit(s[right]))
+                { right--; }
+
+                if (char.ToLower(s[left]) != char.ToLower(s[right]))
+
+                {
+                    return false;
+                }
+                left++;
+                right--;
+            }
+            return true;
+        }
         public int RomanToInt(string s)
         {
             var map = new Dictionary<char, int>
@@ -287,19 +309,26 @@ namespace LeetCode_Problems
         }
 
         // ---------------- Day 9 ----------------
-        public int[] TwoSum2(int[] nums, int target) => TwoSum(nums, target);
+       // public int[] TwoSum2(int[] nums, int target) => TwoSum(nums, target);
 
-        public List<List<string>> GroupAnagrams(string[] strs)
+        public IList<IList<string>> GroupAnagrams(string[] strs)
         {
             var dict = new Dictionary<string, List<string>>();
+
             foreach (var s in strs)
             {
                 var key = new string(s.OrderBy(c => c).ToArray());
-                if (!dict.ContainsKey(key)) dict[key] = new List<string>();
+                if (!dict.ContainsKey(key))
+                    dict[key] = new List<string>();
+
                 dict[key].Add(s);
             }
-            return dict.Values.ToList();
+
+            return dict.Values
+                       .Select(list => (IList<string>)list)
+                       .ToList();
         }
+
 
         public int[] TopKFrequent(int[] nums, int k)
         {
@@ -443,6 +472,144 @@ namespace LeetCode_Problems
         #endregion
 
 
+
+        //----------------- Day 12 -----------------------
+
+        public int LongestConsecutive(int[] nums)
+        {
+            HashSet<int> lst = new HashSet<int>();             //  { 9, 1, 4, 7, 3, -1, 0, 5, 8, -1, 6 }
+
+            // sort Array
+            int longest = 0;
+            Array.Sort(nums);
+
+
+            for (int i = 0; i < nums.Length; i++)
+            {
+                if (i == 0 || lst.Count() == 0)
+                {
+                    lst.Add(nums[i]);
+                }
+                else
+                {
+                    var isSequenced = lst.Contains(nums[i] - 1) || lst.Contains(nums[i]);
+
+                    if (isSequenced)
+                    {
+                        lst.Add(nums[i]);
+                    }
+                    else
+                    {
+                        longest = Math.Max(longest, lst.Count());
+                        lst.Clear();
+                        lst.Add(nums[i]);
+                    }
+                }
+            }
+            return Math.Max(longest, lst.Count());
+        }
+        public bool ContainsDuplicate(int[] nums)
+        {
+            var set = new HashSet<int>();
+            foreach (var num in nums)
+            {
+                if (set.Contains(num)) return true;
+
+                set.Add(num);
+            }
+            return false;
+        }
+        public bool IsAnagram(string s, string t)
+        {
+
+            var dic1 = new Dictionary<char, int>();            // char , freq
+            var dic2 = new Dictionary<char, int>();
+
+            if (s.Length != t.Length) return false;
+            // Fill Dictionaries
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (dic1.ContainsKey(s[i]))
+                {
+                    dic1[s[i]]++;
+                }
+                else
+                {
+                    dic1.Add(s[i], 1);
+                }
+
+
+                if (dic2.ContainsKey(t[i]))
+                {
+                    dic2[t[i]]++;
+                }
+                else
+                {
+                    dic2.Add(t[i], 1);
+                }
+            }
+
+            foreach (var k in dic1)
+            {
+                if (dic2.ContainsKey(k.Key))
+                {
+
+                    dic1.TryGetValue(k.Key, out int dic1val);
+                    dic2.TryGetValue(k.Key, out int dic2val);
+
+                    if (dic1val != dic2val) return false;
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // [0,2,0,3,1,0,1,3,2,1]
+        public int Trap(int[] height)
+        {
+            int rainAmount = 0;
+            int left = 0, right = 0;
+            var lstInBetween = new List<int>();
+            for (int i = 0; i < height.Length; i++)
+            {
+                if (height[i] != 0)
+                {
+                    if (left == 0) left = i;
+
+                    for (int j = i + 1; height[j] < height[left]; j++)
+                    {
+                        lstInBetween.Add(height[j]);
+                        right = j + 1;
+                    }
+
+                    if (left != 0 && right != 0)
+                    {
+                        // calculate 
+                        int h= Math.Min(height[left], height[right]);
+                        int w = lstInBetween.Count();
+
+                        int amounttodecrement = 0;
+                        foreach(var item in lstInBetween)
+                        {
+                            amounttodecrement += item;
+                        }
+                        rainAmount += h * w -amounttodecrement;
+
+                        left = right;
+                        right = 0;
+                        i = left-1;
+                        lstInBetween.Clear();
+                    }
+                }
+
+            }
+            return rainAmount;
+
+        }
         // helper
         public void PrintList(ListNode? node)
         {
